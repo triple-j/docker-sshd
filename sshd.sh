@@ -33,6 +33,12 @@ else
   sed -i 's/PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
 fi
 
+# SSHPORT
+if [ "$SSHPORT" != "" ]
+then
+  sed -i "s/Port .*/Port $SSHPORT/" /etc/ssh/sshd_config
+fi
+
 # Public key
 if [ "$PUBKEY" != "" ]
 then
