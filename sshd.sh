@@ -61,5 +61,13 @@ case "$SUDOER" in
     echo "No sudo power allowed"
 esac
 
+# enable X
+if [ "$ENABLEX" = "yes" ]
+then
+  sed -i "s/^.*X11Forwarding.*$/X11Forwarding yes/" /etc/ssh/sshd_config
+  sed -i "s/^.*X11UseLocalhost.*$/X11UseLocalhost no/" /etc/ssh/sshd_config
+  grep "^X11UseLocalhost" /etc/ssh/sshd_config || echo "X11UseLocalhost no" >> /etc/ssh/sshd_config
+fi
+
 service ssh start
 syslogd -n -O /dev/stdout
