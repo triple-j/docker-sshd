@@ -1,3 +1,5 @@
+forked from mdnsfr/docker-sshd and made some changes
+
 # docker-sshd
 Simple quick SSHD docker image for ephemeral access
 
@@ -12,6 +14,8 @@ The configuration is done via ENV variables
 - GROUPID : posix gid (default=1000)
 - USERDIR : account home directory (default=/data)
 - SUDOER : Default is "no", other values are "nopasswd" and "yes"
+- SSHPORT : SSH port, default 22
+- ENABLEX : enable X11-forwarding if the value is "yes"
 
 Both PASSWORD and PUBKEY variables are optionnal, but a SSHD server without any credential would be useless. Maybe you want to use this docker image to try hacking OpenSSH daemon.
 
@@ -30,5 +34,7 @@ docker run -it --rm \
   -e "GROUPID=1020" \
   -e "USERDIR=/srv/myhome" \
   -e "SUDOER=nopasswd" \
+  -e "SSHPORT=2222" \
+  -e "ENABLEX=yes" \
   mdns/sshd
 ```
