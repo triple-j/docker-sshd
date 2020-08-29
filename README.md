@@ -1,6 +1,7 @@
-forked from mdnsfr/docker-sshd and made some changes
-
 # docker-sshd
+
+> forked from **mdnsfr/docker-sshd**
+
 Simple quick SSHD docker image for ephemeral access
 
 ## Configuration
@@ -36,5 +37,9 @@ docker run -it --rm \
   -e "SUDOER=nopasswd" \
   -e "SSHPORT=2222" \
   -e "ENABLEX=yes" \
-  mdns/sshd
+  trejeraos/sshd
 ```
+
+### Startup Script
+
+If the file `"$USERDIR/prerun.sh"` exists, it will be run as _root_ on start up. This can be used for additional configuration.

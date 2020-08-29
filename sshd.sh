@@ -6,7 +6,7 @@
 [ "$USERID" = "" ] && USERID=1000
 [ "$GROUPID" = "" ] && GROUPID=1000
 [ "$USERSHELL" = "" ] && USERSHELL=/bin/bash
-[ "$USERDIR" = "" ] && USERDIR="/home/$USERNAME"
+[ "$USERDIR" = "" ] && USERDIR="/data"
 
 echo "Creating user $USERNAME"
 useradd $USERNAME
@@ -25,18 +25,18 @@ if [ "$PASSWORD" != "" ]
 then
   echo "Setting $USERNAME password"
   usermod -p $(openssl passwd "$PASSWORD") "$USERNAME"
-  sed -i 's/PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+  sed -i 's/PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config.d/overrides.conf
   echo '================================================================='
   echo ' Warning : Using a password is less secure than using a SSH key !'
   echo '================================================================='
 else
-  sed -i 's/PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
+  sed -i 's/PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config.d/overrides.conf
 fi
 
 # SSHPORT
 if [ "$SSHPORT" != "" ]
 then
-  sed -i "s/Port .*/Port $SSHPORT/" /etc/ssh/sshd_config
+  sed -i "s/Port .*/Port $SSHPORT/" /etc/ssh/sshd_config.d/overrides.conf
 fi
 
 # Public key
@@ -64,10 +64,15 @@ esac
 # enable X
 if [ "$ENABLEX" = "yes" ]
 then
-  sed -i "s/^.*X11Forwarding.*$/X11Forwarding yes/" /etc/ssh/sshd_config
-  sed -i "s/^.*X11UseLocalhost.*$/X11UseLocalhost no/" /etc/ssh/sshd_config
-  grep "^X11UseLocalhost" /etc/ssh/sshd_config || echo "X11UseLocalhost no" >> /etc/ssh/sshd_config
+  sed -i "s/^.*X11Forwarding.*$/X11Forwarding yes/" /etc/ssh/sshd_config.d/overrides.conf
+  sed -i "s/^.*X11UseLocalhost.*$/X11UseLocalhost no/" /etc/ssh/sshd_config.d/overrides.conf
+  grep "^X11UseLocalhost" /etc/ssh/sshd_config.d/overrides.conf || echo "X11UseLocalhost no" >> /etc/ssh/sshd_config.d/overrides.conf
 fi
 
 service ssh start
+
+if [ -f "$USERDIR/prerun.sh" ]; then
+  /bin/bash "$USERDIR/prerun.sh"
+fi
+
 syslogd -n -O /dev/stdout
